@@ -1,0 +1,9 @@
+au 30 juin
+
+Un zip avec les sources du code
+
++ compte admin + mdp
++ export BDD
++ url du site en ligne
+
+leclercqfrederic95@free.fr

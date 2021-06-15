@@ -1,0 +1,119 @@
+:root{
+    scroll-behavior: auto; /* smooth avec bootstrap*/
+}
+
+nav.bg-perso, footer.bg-perso, #profil.active, #infos.active, #pwd.active{
+    background-color: #ffaf00;
+}
+.nav-link{
+    color: rgba(0,0,0,.55);
+}
+
+.nav-link.active, .nav-link:hover{
+    color: rgba(0,0,0,.9);
+}
+
+.btn-perso{
+    background-color: #ffaf00;
+    color: white;
+}
+.text-lien{
+    color: steelblue;
+}
+
+html{
+    min-height: 100vh;
+    position: relative;
+}
+
+main{
+    padding: 56px 0;
+}
+
+footer{
+    position: absolute;
+    bottom: 0;
+}
+
+h2{
+    padding-top: 10px;
+}
+
+.btn-actions{
+    min-width: 154px;
+}
+
+#auteur{
+    font-style: italic;
+}
+.hidden{
+    display: none;
+}
+.show{
+    display: block;
+}
+.list-group-item.active{
+    background: #6c757d;
+    border:#6c757d;
+}
+
+#preview a{
+    position: absolute;
+    top: 0;
+    right: 50%;
+}
+
+#preview:hover, #preview2:hover, #preview3:hover, #preview4:hover, #preview5:hover{
+    cursor: pointer;
+}
+
+.contenu{
+    text-align: justify;
+}
+
+#hauteur{
+    height: 150px;
+    min-width: 160px;
+    overflow: hidden;
+}
+
+#lightbox {
+    position: fixed; /* La lightbox apparaît avant la fermeture de la balise <body> ce qui facilite son positionnement */
+    z-index: 999; /* Mettez une valeur supérieur à celle du contenu, de sorte que la lightbox soit toujours au dessus */
+     /* Permet de faire apparaître la lightbox à partir des coordonnées (0;0) */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+#lightbox img {
+    position: absolute; /* Permet d'afficher l'image au centre de l'écran */
+    z-index: 998;
+    top: 50%; /* Centrage vertical */
+    left: 50%; /* Centrage horizontal */
+    transform: translate(-50%, -50%);
+    padding: 32px 32px 32px 32px; /* Création de fonds perdus pour éviter que l'image ne touche directement les bords du cadre */
+    /* Création de marges pour éviter que l'image ne prenne tout l'écran */
+    max-width: 80%;
+    max-height: 80%;
+    background: rgb(255, 255, 255); /* Mise en place d'un fond au cas où l'image soit en transparence */
+    box-shadow: rgba(0, 0, 0, 0.8) 0 0 16px;
+}
+
+#boutonMasque{
+    background-color: transparent;
+    color:#0a58ca;
+    border: none;
+}
+
+@media (max-width: 600px) {
+    /* .contenu{
+        text-align: left;
+    } */
+    .btn-actions{
+        min-width: 50px;
+        text-align: center;
+    }
+  }
