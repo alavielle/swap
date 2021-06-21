@@ -101,7 +101,7 @@ require_once('../includes/header.php');
                                     <?php endif ?>
                                 </td>
                                 <td><?php echo $membre['date_enrFR'] ?></td>
-                                <td class="btn-actions">
+                                <td class="text-center btn-actions">
                                     <a href="?action=visu" class="btn btn-outline-primary"><i class="fa fa-eye"></i></a>
                                     <button type="submit" class="btn btn-outline-secondary mt-1 mb-1"><i class="fa fa-edit"></i></button>
                                     <a href="?action=delete&id=<?php echo $membre['id_membre'] ?>" class="btn btn-outline-danger confirm"><i class="fa fa-trash"></i></a>

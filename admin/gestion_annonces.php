@@ -73,7 +73,7 @@ require_once('../includes/header.php');
                     <th>Description courte</th>
                     <th>Description longue</th>
                     <th>Prix</th>
-                    <th class="col-3">Photo</th>
+                    <th>Photo</th>
                     <th>Région</th>
                     <th>CP</th>
                     <th>Ville</th>
@@ -98,7 +98,7 @@ require_once('../includes/header.php');
                                 ?></td>
                             <td><?php echo $annonce['prix'] ?></td>
                             <td>
-                                <div id="hauteur"><img src="../images/<?php echo $annonce['photo'] ?>" alt="<?php echo $annonce['titre'] ?>" class="mx-auto d-block" width="100%"></div>
+                                <div id="hauteur"><img src="../images/<?php echo $annonce['photo'] ?>" alt="<?php echo $annonce['titre'] ?>" class="mx-auto d-block" height="100%"></div>
                                 <div class="text-center"><button class="text-center" data-index="1" id="boutonMasque" data-bs-toggle="modal" data-bs-target="#modalDiapo<?php echo $annonce['id_annonce'] ?>">Voir les autres photos</button>
                                 </div>
                                 <div class="modal fade" id="modalDiapo<?php echo $annonce['id_annonce'] ?>" tabindex="-1" aria-labelledby="modalContactLabel" aria-hidden="true">
@@ -150,7 +150,7 @@ require_once('../includes/header.php');
                             <td><?php echo $annonce['pseudo'] ?></td>
                             <td><?php echo $annonce['categorie'] ?></td>
                             <td><?php echo $annonce['date_enrFR'] ?></td>
-                            <td class="btn-actions">
+                            <td class="text-center btn-actions">
                                 <a href="../annonce.php?id=<?php echo $annonce['id_annonce'] ?>" class="btn btn-outline-primary"><i class="fa fa-eye"></i></a>
                                 <a href="../depot_annonce.php?action=edit&id=<?php echo $annonce['id_annonce'] ?>" class="btn btn-outline-secondary mt-1 mb-1"><i class="fa fa-edit"></i></a>
                                 <a href="?action=delete&id=<?php echo $annonce['id_annonce'] ?>" class="btn btn-outline-danger confirm"><i class="fa fa-trash"></i></a>

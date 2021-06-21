@@ -17,7 +17,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'deletea' && !empty($_GET['id']
     ));
     if ($annonce->rowCount() > 0) {
         $infos = $annonce->fetch();
-        if (isAdmin() || $infos['id_membre'] == $_SESSION['user']['id_user']) {
+        if (isAdmin() || $infos['id_membre'] == $_SESSION['membre']['id_membre']) {
             // Suppression des photos
             $titre = $infos['titre'];
             $id_photo = $infos['id_photo'];

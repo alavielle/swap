@@ -159,8 +159,8 @@ require_once('includes/header.php');
                         <label for="civilite" class="form-label">Civilité</label>
                         <select id="civilite" name="civilite" class="form-select">
                             <option disabled <?php if (empty($_POST['civilite'])) echo 'selected' ?>>Choisir une civilité</option>
-                            <option value="m">Homme</option>
-                            <option value="f">Femme</option>
+                            <option value="m" <?php if (!empty($_POST['civilite']) && $_POST['civilite'] == "m") echo 'selected' ?>>Homme</option>
+                            <option value="f" <?php if (!empty($_POST['civilite']) && $_POST['civilite'] == "f") echo 'selected' ?>>Femme</option>
                         </select>
                     </div>
                 </div>

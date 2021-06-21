@@ -1,0 +1,3 @@
+ErrorDocument 404 /swap/404.php
+ErrorDocument 403 /swap/403.php
+options -Indexes

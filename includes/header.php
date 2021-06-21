@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SWAP | <?php echo $title ?? '' ?> </title>
-
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <!-- bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
@@ -19,7 +19,7 @@
 
     <!-- Data Tables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
-  
+
     <!-- css principal -->
     <link rel="stylesheet" href="<?php echo URL ?>css/style.css">
 
@@ -74,13 +74,13 @@
                             </li>
                         <?php endif ?>
                     </ul>
-                    <?php if ($title == "Accueil") :?>
-                        <div class="d-flex" method="POST" >
+                    <?php if ($title == "Accueil") : ?>
+                        <div class="d-flex" method="POST">
                             <input class="form-control me-2" list="datalistOptions" id="critere" name="critere" placeholder="Recherche ...">
                             <datalist id="datalistOptions">
                             </datalist>
                             <button class="btn btn-outline-light" type="submit" id="recherche">Rechercher</button>
-                    </div>
+                        </div>
                     <?php endif ?>
                 </div>
             </div>

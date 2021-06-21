@@ -2,11 +2,25 @@
     scroll-behavior: auto; /* smooth avec bootstrap*/
 }
 
+pre {
+    font-size: 100%;
+	font: inherit;
+    white-space: pre-wrap;
+  }
+
 nav.bg-perso, footer.bg-perso, #profil.active, #infos.active, #pwd.active{
     background-color: #ffaf00;
 }
 .nav-link{
     color: rgba(0,0,0,.55);
+}
+.couleur-perso{
+    color:#ffaf00;
+    font-weight: bold;
+}
+
+.blanc{
+    color:white;
 }
 
 .nav-link.active, .nav-link:hover{
@@ -17,6 +31,8 @@ nav.bg-perso, footer.bg-perso, #profil.active, #infos.active, #pwd.active{
     background-color: #ffaf00;
     color: white;
 }
+
+
 .text-lien{
     color: steelblue;
 }
@@ -33,6 +49,9 @@ main{
 footer{
     position: absolute;
     bottom: 0;
+}
+h1{
+    font-size: 1.8em;
 }
 
 h2{
@@ -58,12 +77,13 @@ h2{
 }
 
 #preview a{
-    position: absolute;
+    /* position: absolute; */
     top: 0;
     right: 50%;
+    border: 1px solid grey;
 }
 
-#preview:hover, #preview2:hover, #preview3:hover, #preview4:hover, #preview5:hover{
+#preview1:hover, #preview2:hover, #preview3:hover, #preview4:hover, #preview5:hover{
     cursor: pointer;
 }
 
@@ -71,10 +91,36 @@ h2{
     text-align: justify;
 }
 
+
 #hauteur{
-    height: 150px;
-    min-width: 160px;
+    height: 180px;
     overflow: hidden;
+}
+
+#blocGalerie {
+    overflow: hidden;
+    max-height: 600px;
+}
+#blocGalerie img{
+    padding: 5px;
+    border: 5px solid white;
+    width: 100%;
+    max-width: 600px;
+
+}
+
+#miniatures img{
+    width: 15%;
+}
+
+.autreAnnonce{
+    width: 90%;
+    overflow: hidden;
+}
+
+.miniature:hover{
+    border: 3px solid #ffaf00;
+    cursor: pointer;
 }
 
 #lightbox {
@@ -116,4 +162,6 @@ h2{
         min-width: 50px;
         text-align: center;
     }
+    
+
   }

@@ -129,3 +129,18 @@ function pays_europe(){
     sort($pays, SORT_STRING);
     return $pays;
 }
+
+// mélanger le tableau afin de récupérer des annonces aléatoires de la même catégorie
+function shuffle_assoc(&$array) {
+    $keys = array_keys($array);
+
+    shuffle($keys);
+
+    foreach($keys as $key) {
+        $new[$key] = $array[$key];
+    }
+
+    $array = $new;
+
+    return true;
+}

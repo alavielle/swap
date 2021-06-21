@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+
   const euro = new Intl.NumberFormat("fr-FR", {
     style: "currency",
     currency: "EUR",
@@ -44,7 +45,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let header = "header" + numPhoto;
     let id = "#preview" + numPhoto + " img";
     let nom_original = "nom_original" + numPhoto;
-    // let data_img = "data_img" + numPhoto;
+    let data_img = "data_img" + numPhoto;
+    
     document
       .getElementById(header)
       .addEventListener("change", function (event) {
@@ -57,10 +59,8 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector(id).setAttribute("src", e.target.result);
             if (document.getElementById(nom_original)) {
               // memoriser les infos du fichier image
-              document
-                .getElementById(nom_original)
-                .setAttribute("value", fichier.name);
-              // document.getElementById(data_img).setAttribute('value', e.target.result);
+              document.getElementById(nom_original).setAttribute("value", fichier.name);
+              document.getElementById(data_img).setAttribute("value", e.target.result);
             }
           };
         }
@@ -147,6 +147,12 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((err_region) => console.log(err_region));
   }
 
+  if (document.getElementById("id_membre")) {
+    if ($("#id_membre").val() > 0) {
+      window.onload = filtre_et_tri(e);
+    }
+  }
+
   // Filtres et de la page d'accueil
   $("#tri").change(filtre_et_tri);
   $("#id_categorie").change(filtre_et_tri);
@@ -186,16 +192,27 @@ document.addEventListener("DOMContentLoaded", function () {
           $("#tbody").html("");
           let nb = datas.length;
           datas.forEach(function (value) {
+            let id_annonce = value["id_annonce"];
             let photo = value["photo"];
             let titre = value["titre"];
+            let description_courte = value["description_courte"];
             let description = value["description_longue"].substr(0, 200);
             if (value["description_longue"].length > 200) {
               description += " ...";
             }
             let pseudo = value["pseudo"];
+            let id_membre = value["id_membre"];
             let prix = euro.format(value["prix"]);
-
-            remplissage(photo, titre, description, pseudo, prix);
+            remplissage(
+              id_annonce,
+              photo,
+              titre,
+              description_courte,
+              description,
+              pseudo,
+              id_membre,
+              prix
+            );
           });
           let pluriel = "";
           if (nb > 1) pluriel = "s";
@@ -209,19 +226,67 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // fonction de remplissage de la div tbody
-  function remplissage(photo, titre, description, pseudo, prix, id_annonce) {
-    $("#tbody").append(`
+  function remplissage(
+    id_annonce,
+    photo,
+    titre,
+    description_courte,
+    description,
+    pseudo,
+    id_membre,
+    prix
+  ) {
+    $.ajax({
+      url: "ajax/moyenne.php", // on donne l'URL du fichier de traitement
+      type: "POST", // la requête est de type POST
+      dataType: "json",
+      data: {
+        id_membre: id_membre,
+      }, // et on envoie nos données
+    })
+      .done(function (datas) {
+        let moyenne = datas[0]["moyenne"];
+
+        let i = 1;
+        let etoiles = "";
+        while (i <= moyenne) {
+          etoiles += '<i class="fas fa-star"></i>';
+          i++;
+        }
+        if (moyenne > i - 1) {
+          etoiles += '<i class="fas fa-star-half-alt"></i>';
+        }
+
+        $("#tbody").append(`
+
     <tr>
-    <td class="col-md-3" id="tbodyPhoto"><img src="images/${photo}" alt="${titre}" class="img-fluid d-block mx-auto" width="150"></td>
-    <td>
-        <p ><a href="annonce.php?id=${id_annonce}" id="tbodyTitre" class="fw-bold text-decoration-none text-lien">${titre}</a></p>
-        <p id="tbodyDesc" >
-        ${description}
-        </p>
-        <p id="tbodyPseudo" class="mt-3"><a href="#" class="text-decoration-none text-lien">${pseudo}</a></p>
-    </td>
-    <td id="tbodyPrix" class="fw-bold col-md-2 text-end">${prix}</td>
-  </tr>`);
+      <td class="col-md" id="tbodyPhoto">
+          <div id="hauteur"><img src="images/${photo}" alt="${titre}" class="mx-auto d-block" height="100%"></div>
+      </td>
+      <td class="col-md">
+          <div class="d-flex justify-content-between pb-2">
+              <span class="d-inline"><a href="annonce.php?id=${id_annonce}"" id="tbodyTitre" class="fw-bold text-decoration-none text-lien">${titre}</a></span>
+              <span class="fw-bold col-md-2 d-inline text-end">${prix}</span>
+          </div>
+          <div class="d-flex">
+              <p id="tbodyDesc">${description_courte}<br>
+              ${description}
+              </p>
+          </div>
+          <div class="d-flex align-items-end">
+              <p id="tbodyPseudo" class="mt-3 "><a href="#" class="text-decoration-none text-lien">${pseudo}
+               ${etoiles}
+              </a><span class="hidden" id="moyenne">${moyenne}</span></p>
+          </div>
+      </td>
+
+  </tr>
+  
+  `);
+      })
+      .fail(function (error) {
+        console.log(error);
+      });
   }
 
   // fonction de recherche
@@ -243,16 +308,28 @@ document.addEventListener("DOMContentLoaded", function () {
             $("#filtre").html("");
             $("#tbody").html("");
             datas.forEach(function (value) {
+              let id_annonce = value["id_annonce"];
               let photo = value["photo"];
               let titre = value["titre"];
+              let description_courte = value["description_courte"];
               let description = value["description_longue"].substr(0, 200);
               if (value["description_longue"].length > 200) {
                 description += " ...";
               }
               let pseudo = value["pseudo"];
+              let id_membre = value["id_membre"];
               let prix = euro.format(value["prix"]);
 
-              remplissage(photo, titre, description, pseudo, prix);
+              remplissage(
+                id_annonce,
+                photo,
+                titre,
+                description_courte,
+                description,
+                pseudo,
+                id_membre,
+                prix
+              );
             });
             let pluriel = "";
             if (nb > 1) pluriel = "s";
@@ -296,6 +373,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Data Tables
   $("#tableAnnonce").DataTable({
+    "scrollX": true,
+  
     language: {
       url: "../media/datatablefrench.json",
     },
@@ -348,23 +427,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Modal pour contacter l'auteur de l'annonce
   if (document.getElementById("modalContact")) {
-    var contactModal = document.getElementById("modalContact");
+    var modalContact = document.getElementById("modalContact");
     modalContact.addEventListener("show.bs.modal", function (event) {
       // Button that triggered the modal
       var button = event.relatedTarget;
       // Extract info from data-bs-* attributes
       var recipient = button.getAttribute("data-bs-whatever");
-      // If necessary, you could initiate an AJAX request here
-      // and then do the updating in a callback.
-      //
       // Update the modal's content.
       var modalTitle = modalContact.querySelector(".modal-title");
-      var modalBodyInput = modalContact.querySelector(".modal-body input");
-
       modalTitle.textContent = "Contacter " + recipient;
+      var modalObjetInput = modalContact.querySelector(".modal-body input");
+      var modalBodyInput = modalContact.querySelector(".modal-body textarea");
+      document.getElementById("envoyer").addEventListener('click', function(){
+        if(!modalObjetInput.value){
+          window.alert('Vous devez saisir un objet au message');
+        }
+        else if(!modalBodyInput.value){
+          window.alert('Vous devez saisir un message');
+        }
+        else {
+          console.log('fr');
+          $("#modalContact").modal('hide');
+        }
+      });
     });
+
   }
- 
 
   //lightBox pour les photos supplémentaires
   $(".lightbox img").click(function () {
@@ -384,5 +472,88 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
     });
+  });
+
+ // Obtenir id numérique des étoiles au format star_numero
+  function idNum(id) {
+    var id = id.split("_");
+    var id = id[1];
+    return id;
+  }
+
+  
+  if (document.getElementById("notation")) {
+
+    // Ouverture de la modal uniquement si connecté
+     $("#ouvertureModal").click(function(e){
+      if(!$("#ouvertureModal").attr('data-index')){
+        window.alert(
+          "Vous devez être connecté pour déposer un commentaire ou une note."
+        );
+      } else {
+        e.preventDefault();
+        $("#modalNote").modal("show");
+      }
+    });
+
+    // Attribuer une note au survol des étoiles
+    let note = 0;
+    $(".fa-star").hover(function () {
+      id = idNum($(this).attr("id")); // id numérique de l'étoile survolée
+      var nbStars = $(".fa-star").length; // Nombre d'étoiles de la classe .fa-star
+      var i;
+      console.log(note);
+      for (i = 0; i <= nbStars; i++) {
+        if (i <= id) $("#star_" + i).attr({ class: "fas fa-star" });
+        else if (i > id) $("#star_" + i).attr({ class: "far fa-star" });
+        if (i == id) note = i; // affectation de la note
+      }
+    });
+    // Enregistrement de la note
+    $("#depot").click(function (e) {
+      let vendeur = $("#vendeur").attr("data-index");
+      let id_annonce = $("#id_annonce").attr("data-index");
+      let commentaire = $("#commentaire-text").val();
+      let avis = $("#avis").val();
+      console.log(vendeur);
+      console.log(id_annonce);
+      console.log(commentaire);
+      console.log(avis);
+      if (!(commentaire == "" && note == 0 && avis == "")) {
+        $.ajax({
+          url: "ajax/notation.php",
+          type: "POST",
+          dataType: "json",
+          data: {
+            commentaire: commentaire,
+            note: note,
+            avis: avis,
+            id_annonce: id_annonce,
+            vendeur: vendeur,
+          },
+        })
+          .done(function (datas) {
+            console.log(datas);
+            $("#modalNote").modal("hide");
+          })
+          .fail(function (error) {
+            console.log(error);
+          });
+      } else {
+        return window.alert(
+          "Vous n'avez saisi aucun commentaire, ni aucune note..."
+        );
+      }
+    });
+  }
+
+  // Selection et Affichage des miniatures en grand sur l'annonce
+  $(".miniature:first").css("border", "3px solid #ffaf00");
+
+  $(".miniature").on("click", function () {
+    $(".miniature").css("border", "3px solid white");
+    $(this).css("border", "3px solid #ffaf00");
+    let nom = $(this).attr("id");
+    $("#grand").attr("src", "images/" + nom);
   });
 });

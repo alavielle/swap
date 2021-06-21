@@ -10,7 +10,7 @@ setlocale(LC_ALL, 'fr_FR.utf8', 'fra.utf8');
 session_name('MYSWAP'); // nom par defaut : PHPSESSID
 session_start();
 
-// Connexion BDD
+// Connexion BDD en local
 $pdo = new PDO(
     'mysql:host=localhost; charset=utf8;dbname=swap',
     'root',
@@ -20,6 +20,17 @@ $pdo = new PDO(
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     )
 );
+
+// Connexion BDD en ligne
+// $pdo = new PDO(
+//     'mysql:host=cl1-sql11; charset=utf8;dbname=tfm80212',
+//     'tfm80212',
+//     'Gk6aUl8{e',
+//     array(
+//         PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING, // On se met en ERRMODE_SILENT en mode production
+//         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+//     )
+// );
 
 // Inclusion des fonctions du site
 require_once('functions.php');

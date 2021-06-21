@@ -1,0 +1,60 @@
+                        <input type="text" id="ville" name="ville" class="form-control" value="<?php echo (isset($current['ville'])) ? $current['ville'] : '' ?>">
+
+
+                            <?php // utilisation de la fonction pays_europe()
+                            $paysEurope = pays_europe();
+                            foreach ($paysEurope as $pays) { ?>
+                                <option value="<?php echo $pays ?>">
+                                    <?php echo $pays ?></option>
+                            <?php
+                            } ?>
+
+
+                     <select id="pays" name="pays" class="form-select">
+                            <option selected><?php echo (isset($current['pays'])) ? $current['pays'] : '' ?></option>
+                        </select>
+
+
+<?php  echo ($annonces->rowCount() > 0) ? 'min='.$prix_min .'max='.$prix_max : '' ?> 
+
+
+<?php
+
+define('URL','https://api-adresse.data.gouv.fr/search/?q=77100&type=municipality');
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, URL);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+$reponse = curl_exec($ch);
+$datas =json_decode($reponse,JSON_PRETTY_PRINT);
+
+echo "<pre>";
+print_r($datas);
+echo "</pre>";
+
+
+RECHERCHE
+
+$critere = 'pot'; // ce qu'on recherche
+$chaine = 'une poterie cuite';
+
+$pos =  strpos($chaine, $critere); // on determine la position du critère recherché
+
+if ($pos !== false) {
+    $debut = strrpos(substr($chaine, 0, $pos), ' '); // on cherche l'espace avant
+    $fin = strpos($chaine, ' ', $pos); // on cherche l'espace après
+
+    if (!$debut) $debut = 0; // pour les mots placés au tout début
+    if (!$fin) $fin = iconv_strlen($chaine); // pour les mots placés en toute fin
+
+
+    $mot = substr($chaine, $debut, ($fin - $debut)); // extraction du mot dans la chaine
+    echo "le mot est : " . $mot; // mot complet : poterie
+}
+
+
+
+tfm80212
+Gk6aUl8{e
+
+Projet symfony => PlanetHoster PHA-REDUC25
