@@ -58,6 +58,7 @@ $categories = sql("SELECT * FROM categorie ORDER BY titre");
 
 
 $title = "Gestion des catégories";
+$subtitle = "Admin";
 require_once('../includes/header.php');
 ?>
 <div class="container">

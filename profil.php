@@ -11,7 +11,7 @@ $chemin = $_SERVER['DOCUMENT_ROOT'] . URL . 'images/';
 
 // Gestion de la suppression d'une annonce
 if (isset($_GET['action']) && $_GET['action'] == 'deletea' && !empty($_GET['id']) && is_numeric($_GET['id'])) {
-    
+
     $annonce = sql("SELECT * FROM annonce WHERE id_annonce = :id", array(
         'id' => $_GET['id']
     ));
@@ -21,7 +21,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'deletea' && !empty($_GET['id']
             // Suppression des photos
             $titre = $infos['titre'];
             $id_photo = $infos['id_photo'];
-            
+
 
             $photos = sql("SELECT * FROM photo WHERE id_photo = $id_photo");
             $photo = $photos->fetch();
@@ -37,10 +37,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'deletea' && !empty($_GET['id']
                 'id' => $id_photo
             ));
             sql('DELETE FROM annonce WHERE id_annonce=:id', array(
-                'id' => $_GET['id']));
+                'id' => $_GET['id']
+            ));
 
             add_flash("L'annonce $titre a été supprimée", 'warning');
-
         } else {
             add_flash("Il n'est pas possible de supprimer une annonce dont vous n'êtes pas l'auteur", 'danger');
             header('location:' . $_SERVER['PHP_SELF']);
@@ -54,7 +54,24 @@ if (isset($_GET['action']) && $_GET['action'] == 'deletea' && !empty($_GET['id']
 // Gestion de la suppression du compte
 if (isset($_GET['action']) && $_GET['action'] == 'deletec') {
 
-    sql('DELETE FROM membre WHERE id_membre=:id', array('id' => $_SESSION['membre']['id_membre']));
+    $id_photos = sql('SELECT id_photo FROM annonce WHERE id_membre=:id', array(
+        'id' => $_SESSION['membre']['id_membre']
+    ));
+    while ($id_photo = $id_photos->fetch()) {
+        $photos = sql('SELECT * FROM photo WHERE id_photo = ' . $id_photo['id_photo']);
+        $photo = $photos->fetch();
+        foreach ($photo as $p) {
+            suppPhotos($p);
+        }
+        sql("DELETE FROM photo WHERE id_photo = " . $photo['id_photo']);
+    }
+    sql('DELETE FROM annonce WHERE id_membre=:id', array(
+        'id' => $_SESSION['membre']['id_membre']
+    ));
+    sql('DELETE FROM membre WHERE id_membre=:id', array(
+        'id' => $_SESSION['membre']['id_membre']
+    ));
+
     add_flash("Votre compte a été supprimé. Merci d'avoir été avec nous. A bientôt", 'info');
     header('location:' . URL . 'connexion.php?action=logout');
     exit();
@@ -148,12 +165,11 @@ if (!empty($_POST)) {
 
         $errors = 0;
 
-
         if (empty($_POST['password'])) {
             $errors++;
             add_flash('Merci de saisir votre mot de passe actuel', 'danger');
         } else {
-            if (!password_verify($_POST['password'], $_SESSION['membre']['password'])) {
+            if (!password_verify($_POST['password'], $_SESSION['membre']['mdp'])) {
                 $errors++;
                 add_flash('Mot de passe incorrect', 'danger');
             }
@@ -185,12 +201,12 @@ if (!empty($_POST)) {
 
             $password_crypte = password_hash($_POST['newpassword'], PASSWORD_DEFAULT);
 
-            sql("UPDATE membre SET password=:password  WHERE id_membre=:id_membre", array(
+            sql("UPDATE membre SET mdp=:password  WHERE id_membre=:id_membre", array(
                 'password' => $password_crypte,
                 'id_membre' => $_SESSION['membre']['id_membre']
             ));
-            $_SESSION['membre']['password']  =  $password_crypte;
-            add_flash('Votre mot de passe a été mise à jour', 'warning');
+            $_SESSION['membre']['mdp']  =  $password_crypte;
+            add_flash('Votre mot de passe a été mis à jour', 'warning');
         }
     }
 }
@@ -201,28 +217,31 @@ $annonces = sql("SELECT id_annonce, titre, photo, date_format(date_enregistremen
 FROM annonce WHERE id_membre = " . $_SESSION['membre']['id_membre'] . "
 ORDER BY date_enregistrement DESC");
 
-$notes = sql("SELECT note.*, date_format(date_enregistrement, '%d/%m/%Y') as date_avisFR 
-FROM note WHERE id_membre2 = " . $_SESSION['membre']['id_membre'] . "
-ORDER BY date_enregistrement DESC");
+$notes = sql("SELECT n.*, m.email, m.pseudo as acheteur, date_format(n.date_enregistrement, '%d/%m/%Y à %Hh%i') as date_enrFR 
+FROM note n 
+LEFT JOIN membre m ON n.id_membre1 = m.id_membre
+WHERE n.id_membre2 = " . $_SESSION['membre']['id_membre'] . "
+ORDER BY n.date_enregistrement DESC");
 
 $membres = sql("SELECT * , date_format(date_enregistrement, '%d/%m/%Y - %H:%i') as date_enrFR FROM membre WHERE id_membre = " . $_SESSION['membre']['id_membre']);
 $selectMembre = $membres->fetch();
 
 $title = 'Profil';
-
+$subtitle = "Connect";
 require_once('includes/header.php');
 ?>
 
 <div class="row">
     <div class="col-lg-4 col-xl-3">
         <div class="list-group" id="list-tab" role="tablist">
-            <a class="list-group-item list-group-item-action active" id="profil" data-bs-toggle="list" href="#showProfil" role="tab">Votre Profil</a>
+            <a class="list-group-item list-group-item-action active" id="profilAnnonce" data-bs-toggle="list" href="#showProfilAnnonce" role="tab">Vos annonces</a>
+            <a class="list-group-item list-group-item-action" id="profilNote" data-bs-toggle="list" href="#showProfilNote" role="tab">Notes et avis</a>
             <a class="list-group-item list-group-item-action" id="infos" data-bs-toggle="list" href="#modifInfos" role="tab">Modifier vos informations</a>
             <a class="list-group-item list-group-item-action" id="pwd" data-bs-toggle="list" href="#modifPWD" role="tab">Modifier votre mot de passe</a>
         </div>
     </div>
 
-    <div class="col-lg">
+    <div class="col-lg-8 col-xl-9">
         <div class="tab-content" id="nav-tabcontent">
             <div class="tab-pane fade" id="modifInfos" role="tabpanel">
                 <div class="col-lg offset-xl-1 ">
@@ -266,38 +285,70 @@ require_once('includes/header.php');
                     </form>
                 </div>
             </div>
-            <div class="tab-pane fade show active" id="showProfil" role="tabpanel">
-                <h2>Annonces en ligne</h2>
+            <div class="tab-pane fade show active" id="showProfilAnnonce" role="tabpanel">
+                <h2>Vos annonces</h2>
+                <hr class="mb-3">
                 <?php if ($annonces->rowCount() > 0) : ?>
-                    <table class="table table-bordered table-hover">
-                        <thead>
+                    <table class="table cell-border table-hover" id="tableAnnonceProfil">
+                        <thead class=" align-middle ">
                             <tr>
-                                <th>Date</th>
+                                <th class="text-center">Date</th>
                                 <th>Titre</th>
                                 <!-- <th>Catégorie</th> -->
                                 <th>Commentaires</th>
-                                <th>Actions</th>
+                                <th class="text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php while ($annonce = $annonces->fetch()) : ?>
                                 <tr>
+
                                     <td class="col-1"><?php echo $annonce['date_annonceFR'] ?></td>
                                     <td class="col-2">
                                         <div><?php echo $annonce['titre'] ?></div>
-                                        <img src="<?php echo 'images/'. $annonce['photo'] ?>" alt="<?php echo $annonce['titre'] ?>" class="rounded me-2" width="148">
-                                        <!-- <td><?php echo $annonce['categorie'] ?></td> -->
+                                        <img src="<?php echo 'images/' . $annonce['photo'] ?>" alt="<?php echo $annonce['titre'] ?>" class="rounded me-2" width="148">
                                     <td class="col">
-                                        <?php $commentaires = sql("SELECT c.*, m.pseudo FROM commentaire c INNER JOIN membre m ON m.id_membre = c.id_membre WHERE c.id_annonce = " . $annonce['id_annonce']); ?>
+                                        <?php $commentaires = sql("SELECT c.*, m.pseudo, m.id_membre, date_format(c.date_enregistrement, '%d/%m/%Y à %Hh%i') as date_commFR FROM commentaire c INNER JOIN membre m ON m.id_membre = c.id_membre WHERE c.id_annonce = " . $annonce['id_annonce']); ?>
                                         <?php while ($commentaire = $commentaires->fetch()) : ?>
-                                            <span id="auteur"><?php echo $commentaire['pseudo'] ?> :</span>
-                                            <?php echo $commentaire['commentaire'] ?><Br>
+                                            <span id="auteur">
+                                                <?php if ($commentaire['id_membre'] == $_SESSION['membre']['id_membre']) :
+                                                    echo 'Vous avez répondu';
+                                                else : echo 'Par ' . $commentaire['pseudo'] ?>
+                                                <?php endif ?>
+                                                , le <?php echo $commentaire['date_commFR'] ?> : </span>
+                                            <pre><?php echo $commentaire['commentaire'] ?></pre><Br>
                                         <?php endwhile ?>
                                     </td>
-                                    <td class="col-2 btn-actions">
+                                    <td class="col-2 btn-actions text-center">
                                         <a href="<?php echo URL ?>annonce.php?id=<?php echo $annonce['id_annonce'] ?>" class="btn btn-outline-primary"><i class="fa fa-eye"></i></a>
                                         <a href="depot_annonce.php?action=edit&id=<?php echo $annonce['id_annonce'] ?>" class="btn btn-outline-secondary mt-1 mb-1"><i class="fa fa-edit"></i></a>
                                         <a href="?action=deletea&id=<?php echo $annonce['id_annonce'] ?>" class="btn btn-outline-danger confirm"><i class="fa fa-trash"></i></a>
+                                        <p><a href="" data-index="<?= $annonce['id_annonce'] ?>" class="btn btn-outline-warning m-3 ouvertureModalReponse">Répondre</a></p>
+
+                                        <div class="modal fade" id="modalReponse<?= $annonce['id_annonce'] ?>" aria-labelledby="modalReponseLabel" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title text-secondary">Répondre :</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row mb-3">
+                                                            <div class="col">
+                                                                <p class="fw-bold"><?php echo $annonce['titre'] ?></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <textarea class="form-control" rows="6" id="commentaire-text<?php echo $annonce['id_annonce'] ?>"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                        <button type="button" class="btn btn-perso reponse" data-index="<?= $annonce['id_annonce'] ?>">Répondre</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
 
@@ -305,31 +356,114 @@ require_once('includes/header.php');
                         </tbody>
                     </table>
 
-
                 <?php else : ?>
                     <div class="mt-4 alert alert-warning">Vous n'avez pas d'annonce en ligne</div>
                 <?php endif; ?>
-
-                <h2>Note et avis</h2>
+            </div>
+            <div class="tab-pane fade" id="showProfilNote" role="tabpanel">
+                <h2>Notes et avis</h2>
+                <hr class="mb-3">
                 <?php if ($notes->rowCount() > 0) : ?>
-                    <table class="table table-bordered table-hover">
-                        <thead>
-
+                    <div class="row alert alert-warning m-4 px-5">Votre note moyenne est de 
+                    <?php
+                        $moyennes = sql("SELECT AVG(note) as 'moyenne' FROM note where id_membre2 = " . $_SESSION['membre']['id_membre']);
+                        $moyenne = $moyennes->fetch(); ?>
+                        <span  class="col "><?= round($moyenne['moyenne'], 2) ?> / 5</span>
+                        <span class="col px-5 text-end"><?php $i = 1;
+                        while ($i <= $moyenne['moyenne']) : ?>
+                            <i class="fas fa-star"></i>
+                        <?php
+                            $i++;
+                        endwhile;
+                        if ($moyenne['moyenne'] > $i - 1) : ?>
+                            <i class="fas fa-star-half-alt"></i>
+                        <?php endif ?>
+                        <?php for ($i = ceil($moyenne['moyenne']); $i < 5; $i++) : ?>
+                            <i class="far fa-star"></i>
+                        <?php endfor ?>
+                        </span>
+                        </div>
+                        <hr class="mb-3">
+                    <table class="table cell-border table-hover display" id="tableNoteProfil">
+                        <colgroup>
+                            <col width="20%">
+                            <col width="15%">
+                            <col width="45%">
+                            <col width="15%">
+                            <col width="5%">
+                        </colgroup>
+                        <thead class="align-middle ">
+                            <tr class="text-center">
+                                <th>Acheteur</th>
+                                <th>Note</th>
+                                <th>Avis</th>
+                                <th>Date d'enregistrement</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            <?php while ($note = $notes->fetch()) : ?>
-
-
-                            <?php endwhile ?>
+                            <?php if ($notes->rowCount() > 0) {
+                                while ($note = $notes->fetch()) : ?>
+                                    <tr>
+                                        <td><?php echo $note['acheteur'] ?></td>
+                                        <td class="col-1">
+                                            <?php for ($i = 0; $i < $note['note']; $i++) : ?>
+                                                <i class="fas fa-star"></i>
+                                            <?php endfor ?>
+                                            <?php for ($i = $note['note']; $i < 5; $i++) : ?>
+                                                <i class="far fa-star"></i>
+                                            <?php endfor ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $extrait = substr($note['avis'], 0, 200);
+                                            echo (iconv_strlen($note['avis']) > 200) ? substr($extrait, 0, strrpos($extrait, ' ')) . ' &hellip;' : $extrait;
+                                            ?>
+                                        </td>
+                                        <td><?php echo $note['date_enrFR'] ?></td>
+                                        <td class="text-center btn-actions">
+                                            <a href="" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalNote<?php echo $note['id_note'] ?>"><i class="fa fa-eye"></i></a>
+                                        </td>
+                                        <div class="modal fade" id="modalNote<?php echo $note['id_note'] ?>" tabindex="-1" aria-labelledby="modalNoteLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title text-secondary" id="modalContactLabel">Avis laissés par les acheteurs :</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row mt-2">
+                                                            <div class="col-6 couleur-perso">Note attribuée par <?php echo $note['acheteur'] ?></div>
+                                                            <div class="col-6 text-end couleur-perso">
+                                                                <?php for ($i = 0; $i < $note['note']; $i++) { ?>
+                                                                    <i class="fas fa-star"></i>
+                                                                <?php } ?>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="note-text" class="col-form-label fst-italic">Message :</label>
+                                                            <textarea class="form-control" id="avis" name="avis" rows="12"><?php echo $note['avis'] ?></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                <?php endwhile ?>
+                            <?php }  ?>
                         </tbody>
                     </table>
                 <?php else : ?>
-                    <div class="mt-4 alert alert-warning">Vous n'avez pas de note</div>
+                    <div class="m-4 alert alert-warning">Vous n'avez pas de note</div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
+
 
 
 

@@ -57,15 +57,16 @@ INNER JOIN photo p USING (id_photo)
 ORDER BY date_enregistrement DESC");
 
 $title = "Gestion des annonces";
+$subtitle = "Admin";
 require_once('../includes/header.php');
 ?>
 
 <div class="row">
     <div class="table-responsive ">
-        <table class="table table-bordered table-hover align-middle display" id="tableAnnonce">
+        <table class="table cell-border table-hover align-middle display" id="tableAnnonce">
             <thead class=" align-middle ">
                 <tr>
-                    <th colspan="14" class="text-center pb-4">Gestion des annonces</th>
+                    <th colspan="14" class="text-center">Gestion des annonces</th>
                 </tr>
                 <tr class="text-center">
                     <th>#</th>
@@ -98,7 +99,7 @@ require_once('../includes/header.php');
                                 ?></td>
                             <td><?php echo $annonce['prix'] ?></td>
                             <td>
-                                <div id="hauteur"><img src="../images/<?php echo $annonce['photo'] ?>" alt="<?php echo $annonce['titre'] ?>" class="mx-auto d-block" height="100%"></div>
+                                <div class="hauteur"><img src="../images/<?php echo $annonce['photo'] ?>" alt="<?php echo $annonce['titre'] ?>" class="mx-auto d-block" height="100%"></div>
                                 <div class="text-center"><button class="text-center" data-index="1" id="boutonMasque" data-bs-toggle="modal" data-bs-target="#modalDiapo<?php echo $annonce['id_annonce'] ?>">Voir les autres photos</button>
                                 </div>
                                 <div class="modal fade" id="modalDiapo<?php echo $annonce['id_annonce'] ?>" tabindex="-1" aria-labelledby="modalContactLabel" aria-hidden="true">

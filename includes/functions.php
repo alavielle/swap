@@ -52,7 +52,7 @@ function getUserByEmail(string $email){
 }
 
 // fonction de chargement des photos
-function upLoadPhotos($numPhoto, $prefix){
+function upLoadPhotos($numPhoto){
     $nomfichier = '';
     $image = "image" . $numPhoto;
     $data_img = "data_img" . $numPhoto;
@@ -61,12 +61,12 @@ function upLoadPhotos($numPhoto, $prefix){
 
     // 1er cas $_FILES est dispo
     if (!empty($_FILES[$image]['name'])) {
-        $nomfichier = $prefix . '_' . $_FILES[$image]['name'];
+        $nomfichier =  time() . uniqid() .'.'. pathinfo($_FILES[$image]['name'], PATHINFO_EXTENSION);
         move_uploaded_file($_FILES[$image]['tmp_name'], $chemin . $nomfichier);
     } 
     // 2ème cas, on utilise la memoire car $_FILES est perdu
     elseif (!empty($_POST[$data_img])) {
-        $nomfichier = $prefix . '_' . $_POST[$nom_original];
+        $nomfichier =  time() . uniqid() .'.'. pathinfo($_POST[$nom_original], PATHINFO_EXTENSION);
         list(, $data) = explode(',', $_POST[$data_img]); // On récupère la variable $data qui est issue du tableau explode
         // ecriture du fichier 
         file_put_contents($chemin . $nomfichier, base64_decode($data));
@@ -107,7 +107,7 @@ function show_flash($option = null){
     $messages = '';
     if (isset($_SESSION['messages'])) {
         foreach (array_keys($_SESSION['messages']) as $keyname) {
-            $messages .= '<div class="alert alert-' . $keyname . '">' . implode('<br>', $_SESSION['messages'][$keyname]) . '</div>'; // implode est équivalent au split
+            $messages .= '<div class="disparition alert alert-' . $keyname . '">' . implode('<br>', $_SESSION['messages'][$keyname]) . '</div>'; // implode est équivalent au split
         }
     }
     if ($option == 'reset') {

@@ -8,7 +8,6 @@ if(isset($_GET)){
     INNER JOIN membre m USING (id_membre)
     WHERE a.titre LIKE '%$_GET[myInputValue]%' 
     OR a.description_courte LIKE '%$_GET[myInputValue]%'
-    OR a.description_longue LIKE '%$_GET[myInputValue]%'
     OR c.titre LIKE '%$_GET[myInputValue]%'
     OR c.motscles LIKE '%$_GET[myInputValue]%'
     ");

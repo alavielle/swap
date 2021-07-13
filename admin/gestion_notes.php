@@ -32,18 +32,18 @@ $notes = sql("SELECT n.*, m1.email as email1, m1.pseudo as acheteur, m2.email as
         ORDER BY date_enregistrement DESC");
 
 $title = "Gestion des notes";
+$subtitle = "Admin";
 require_once('../includes/header.php');
 ?>
 
 <div class="row">
     <div class="table-responsive ">
-        <table class="table table-bordered table-hover align-middle display" id="tablNnote">
+        <table class="table cell-border table-hover align-middle display" id="tableNote">
             <thead class="align-middle ">
                 <tr>
                     <th colspan="7" class="text-center pb-4">Gestion des notes</th>
                 </tr>
                 <tr class="text-center">
-                    <th>#</th>
                     <th>Acheteur</th>
                     <th>Vendeur</th>
                     <th>Note</th>
@@ -56,14 +56,15 @@ require_once('../includes/header.php');
                 <?php if ($notes->rowCount() > 0) {
                     while ($note = $notes->fetch()) : ?>
                         <tr>
-
-                            <td><?php echo $note['id_note'] ?></td>
                             <td><?php echo $note['acheteur'] ?></td>
                             <td><?php echo $note['vendeur'] ?></td>
-                            <td class="col-1"><?php for ($i = 0; $i < $note['note']; $i++) { ?>
+                            <td class="col-1">
+                                <?php for ($i = 0; $i < $note['note']; $i++) :?>
                                     <i class="fas fa-star"></i>
-                                <?php } ?>
-                                <!-- <i class="fas fa-star-half-alt"></i> -->
+                                <?php endfor ?>
+                                <?php for ($i = $note['note']; $i < 5; $i++) : ?>
+                                    <i class="far fa-star"></i>
+                                <?php endfor ?>
                             </td>
                             <td>
                                 <?php
@@ -88,9 +89,12 @@ require_once('../includes/header.php');
                                             <div class="row mt-2">
                                                 <div class="col-6 couleur-perso">Note attribuée par <?php echo $note['acheteur'] ?> à <?php echo $note['vendeur'] ?></div>
                                                 <div class="col-6 text-end couleur-perso">
-                                                    <?php for ($i = 0; $i < $note['note']; $i++) { ?>
+                                                    <?php for ($i = 0; $i < $note['note']; $i++) : ?>
                                                         <i class="fas fa-star"></i>
-                                                    <?php } ?>
+                                                    <?php endfor ?>
+                                                    <?php for ($i = $note['note']; $i < 5; $i++) : ?>
+                                                        <i class="far fa-star"></i>
+                                                    <?php endfor ?>
                                                 </div>
                                             </div>
                                             <div class="mb-3">

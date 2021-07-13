@@ -10,6 +10,8 @@ setlocale(LC_ALL, 'fr_FR.utf8', 'fra.utf8');
 session_name('MYSWAP'); // nom par defaut : PHPSESSID
 session_start();
 
+global $subtitle;
+
 // Connexion BDD en local
 $pdo = new PDO(
     'mysql:host=localhost; charset=utf8;dbname=swap',
@@ -36,5 +38,6 @@ $pdo = new PDO(
 require_once('functions.php');
 
 // Constantes du site
+// define('URL', '/');
 define('URL', '/swap/');
 

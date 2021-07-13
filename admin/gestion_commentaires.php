@@ -30,18 +30,18 @@ $commentaires = sql("SELECT c.*, m.email, m.pseudo, a.id_annonce, a.titre, date_
                 ORDER BY c.date_enregistrement DESC");
 
 $title = "Gestion des commentaires";
+$subtitle = "Admin";
 require_once('../includes/header.php');
 ?>
 
 <div class="row">
     <div class="table-responsive ">
-        <table class="table table-bordered table-hover align-middle display" id="tableCommentaire">
+        <table class="table cell-border table-hover align-middle display" id="tableCommentaire">
             <thead class=" align-middle ">
                 <tr>
                     <th colspan="6" class="text-center pb-4">Gestion des commentaires</th>
                 </tr>
                 <tr class="text-center">
-                    <th>#</th>
                     <th>Membre</th>
                     <th>Annonce</th>
                     <th>Commentaire</th>
@@ -53,8 +53,6 @@ require_once('../includes/header.php');
                 <?php if ($commentaires->rowCount() > 0) {
                     while ($commentaire = $commentaires->fetch()) : ?>
                         <tr>
-
-                            <td><?php echo $commentaire['id_commentaire'] ?></td>
                             <td><?php echo $commentaire['pseudo'] ?></td>
                             <td><?php echo $commentaire['id_annonce'] . ' ' . $commentaire['titre'] ?></td>
                             <td><?php

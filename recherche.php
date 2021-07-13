@@ -21,20 +21,20 @@ require_once('includes/header.php');
                         <tbody id="tbody">
                             <?php while ($annonce = $annonces->fetch()) : ?>
                                 <tr>
-                                    <td class="col-md-3" id="tbodyPhoto">
-                                        <div id="hauteur"><img src="<?php echo 'images/' . $annonce['photo'] ?>" alt="<?php echo $annonce['titre'] ?>" class="mx-auto d-block" width="100%" width="150"></div>
+                                    <td class="col-md-3">
+                                        <div class="hauteur"><img src="<?= 'images/' . $annonce['photo'] ?>" alt="<?php echo $annonce['titre'] ?>" class="mx-auto d-block" width="100%" width="150"></div>
                                     </td>
                                     <td>
-                                        <p><a href="annonce.php?id=<?php echo $annonce['id_annonce'] ?>" id="tbodyTitre" class="fw-bold text-decoration-none text-lien"><?php echo $annonce['titre'] ?></a></p>
-                                        <p id="tbodyDesc">
+                                        <p><a href="annonce.php?id=<?php echo $annonce['id_annonce'] ?>"  class="fw-bold text-decoration-none text-lien"><?= $annonce['titre'] ?></a></p>
+                                        <p >
                                             <?php
                                             $extrait = substr($annonce['description_longue'], 0, 200);
                                             echo (iconv_strlen($annonce['description_longue']) > 200) ? substr($extrait, 0, strrpos($extrait, ' ')) . ' &hellip;' : $extrait;
                                             ?>
                                         </p>
-                                        <p id="tbodyPseudo" class="mt-3"><a href="#" class="text-decoration-none text-lien"><?php echo $annonce['pseudo'] ?></a></p>
+                                        <p id="avis_<?= $annonce['id_membre'] ?>" class="mt-3 avis"><a href="#" class="text-decoration-none text-lien"><?= $annonce['pseudo'] ?></a></p>
                                     </td>
-                                    <td id="tbodyPrix" class="fw-bold col-md-2 text-end"><?php echo number_format($annonce['prix'], 2, ',', ' ') ?> €</td>
+                                    <td id="tbodyPrix" class="fw-bold col-md-2 text-end"><?= number_format($annonce['prix'], 2, ',', ' ') ?> €</td>
                                 </tr>
                             <?php endwhile ?>
                         </tbody>

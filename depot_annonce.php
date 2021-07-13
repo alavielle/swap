@@ -97,25 +97,13 @@ if (!empty($_POST)) {
             add_flash('Merci de choisir au moins une photo pour votre annonce', 'danger');
         }
         $ext_auto = ['image/jpeg', 'image/png'];
-        if (!empty($_FILES['image1']['name']) && !in_array($_FILES['image1']['type'], $ext_auto)) {
-            $errors++;
-            add_flash('Format autorisé : JPEG et PNG', 'danger');
-        }
-        if (!empty($_FILES['image2']['name']) && !in_array($_FILES['image2']['type'], $ext_auto)) {
-            $errors++;
-            add_flash('Format autorisé : JPEG et PNG', 'danger');
-        }
-        if (!empty($_FILES['image3']['name']) && !in_array($_FILES['image3']['type'], $ext_auto)) {
-            $errors++;
-            add_flash('Format autorisé : JPEG et PNG', 'danger');
-        }
-        if (!empty($_FILES['image4']['name']) && !in_array($_FILES['image4']['type'], $ext_auto)) {
-            $errors++;
-            add_flash('Format autorisé : JPEG et PNG', 'danger');
-        }
-        if (!empty($_FILES['image5']['name']) && !in_array($_FILES['image5']['type'], $ext_auto)) {
-            $errors++;
-            add_flash('Format autorisé : JPEG et PNG', 'danger');
+        $i=1;
+        while($i < 6){
+            if (!empty($_FILES['image' . $i]['name']) && !in_array($_FILES['image' . $i]['type'], $ext_auto)) {
+                $errors++;
+                add_flash('Format autorisé : JPEG et PNG', 'danger');
+            }
+            $i++;
         }
 
         if ($errors == 0) {
@@ -127,50 +115,70 @@ if (!empty($_POST)) {
             $nomfichier5 = '';
 
             if ($modif) {
-                $prefix = $current['id_annonce'];
+                // $prefix = $current['id_annonce'];
 
                 if (!empty($_FILES['image1']['name'])) {
-                    $nomfichier1 = upLoadPhotos(1, $prefix);
-                    add_flash('photo1', 'warning');
+                    $nomfichier1 = upLoadPhotos(1);
                     if ($_FILES['image1']['name'] != $photo['photo1']) {
                         suppPhotos($photo['photo1']);
                     }
                 } else {
                     $nomfichier1 = $photo['photo1'];
                 }
+
                 if (!empty($_FILES['image2']['name'])) {
-                    $nomfichier2 = upLoadPhotos(2, $prefix);
+                    $nomfichier2 = upLoadPhotos(2);
                     if ($_FILES['image2']['name'] != $photo['photo2']) {
                         suppPhotos($photo['photo2']);
                     }
                 } else {
-                    $nomfichier2 = $photo['photo2'];
+                    if(isset($_POST['toDel2']) && $_POST['toDel2'] == "toDelete"){
+                        $nomfichier2 = '';
+                        suppPhotos($photo['photo2']);                        
+                    } else {
+                        $nomfichier2 = $photo['photo2'];
+                    }
                 }
+
                 if (!empty($_FILES['image3']['name'])) {
-                    $nomfichier3 = upLoadPhotos(3, $prefix);
+                    $nomfichier3 = upLoadPhotos(3);
                     if ($_FILES['image3']['name'] != $photo['photo3']) {
                         suppPhotos($photo['photo3']);
                     }
                 } else {
-                    $nomfichier3 = $photo['photo3'];
+                    if(isset($_POST['toDel3']) && $_POST['toDel3'] == "toDelete"){
+                        $nomfichier3 = '';
+                        suppPhotos($photo['photo3']);                        
+                    } else {
+                        $nomfichier3 = $photo['photo3'];
+                    }
                 }
                 if (!empty($_FILES['image4']['name'])) {
-                    $nomfichier4 = upLoadPhotos(4, $prefix);
+                    $nomfichier4 = upLoadPhotos(4);
                     if ($_FILES['image4']['name'] != $photo['photo4']) {
                         suppPhotos($photo['photo4']);
                     }
                 } else {
-                    $nomfichier4 = $photo['photo4'];
+                    if(isset($_POST['toDel4']) && $_POST['toDel4'] == "toDelete"){
+                        $nomfichier4 = '';
+                        suppPhotos($photo['photo4']);                        
+                    } else {
+                        $nomfichier4 = $photo['photo4'];
+                    }
                 }
                 if (!empty($_FILES['image5']['name'])) {
-                    $nomfichier5 = upLoadPhotos(5, $prefix);
+                    $nomfichier5 = upLoadPhotos(5);
                     if ($_FILES['image5']['name'] != $photo['photo5']) {
                         suppPhotos($photo['photo5']);
                     }
                 } else {
-                    $nomfichier5 = $photo['photo5'];
+                    if(isset($_POST['toDel5']) && $_POST['toDel5'] == "toDelete"){
+                        $nomfichier5 = '';
+                        suppPhotos($photo['photo5']);                        
+                    } else {
+                        $nomfichier5 = $photo['photo5'];
+                    }
                 }
-
                 sql("UPDATE photo SET photo1=:photo1, photo2=:photo2, photo3=:photo3, photo4=:photo4, photo5=:photo5 WHERE id_photo=:id_photo", array(
                     'photo1' => $nomfichier1,
                     'photo2' => $nomfichier2,
@@ -200,15 +208,15 @@ if (!empty($_POST)) {
             }
             if (isset($_POST['enregistrer'])) {
 
-                $lastAnnonce = sql("SELECT `id_annonce` FROM `annonce` ORDER BY id_annonce DESC LIMIT 1");
-                $lastId_annonce = $lastAnnonce->fetch();
-                $prefix = $lastId_annonce['id_annonce'] + 1;
+                // $lastAnnonce = sql("SELECT `id_annonce` FROM `annonce` ORDER BY id_annonce DESC LIMIT 1");
+                // $lastId_annonce = $lastAnnonce->fetch();
+                // $prefix = $lastId_annonce['id_annonce'] + 1;
 
-                $nomfichier1 = upLoadPhotos(1, $prefix);
-                $nomfichier2 = upLoadPhotos(2, $prefix);
-                $nomfichier3 = upLoadPhotos(3, $prefix);
-                $nomfichier4 = upLoadPhotos(4, $prefix);
-                $nomfichier5 = upLoadPhotos(5, $prefix);
+                $nomfichier1 = upLoadPhotos(1);
+                $nomfichier2 = upLoadPhotos(2);
+                $nomfichier3 = upLoadPhotos(3);
+                $nomfichier4 = upLoadPhotos(4);
+                $nomfichier5 = upLoadPhotos(5);
 
                 sql("INSERT INTO photo VALUES (NULL, :photo1, :photo2, :photo3, :photo4, :photo5)", array(
                     'photo1' => $nomfichier1,
@@ -245,7 +253,7 @@ if (!empty($_POST)) {
 
 $title = 'Déposer une annonce';
 require_once('includes/header.php');
-
+$subtitle = "Connect";
 $categories = sql("SELECT * FROM categorie ORDER BY titre");
 ?>
 
@@ -291,57 +299,60 @@ $categories = sql("SELECT * FROM categorie ORDER BY titre");
                 <div><label for="photo" class="form-label">Photos</label></div>
                 <div class="mb-3">
                     <input type="file" id="header1" name='image1' class="hidden form-control" accept="image/jpeg, image/png">
-                    <label for="header1" id="preview1" class="position-relative">
+                    <label for="header1" id="preview1" class="position-relative mt-2">
                         <img src="<?php echo (!empty($_POST['data_img1'])) ? $_POST['data_img1'] : ((isset($photo['photo1'])) ? URL . 'images/' . $photo['photo1'] : 'https://via.placeholder.com/100?text=Photo1') ?>" alt="preview1" class="rounded" width="148">
-                        <span <?php if(!$modif) echo 'hidden'?> class="pe-1 text-secondary position-absolute top-0 end-0" id="supprPhoto1"><i class="far fa-window-close"></i></span>
                     </label>
                     <input type="hidden" id="nom_original1" name="nom_original1" value="<?php echo $_POST['nom_original'] ?? '' ?>">
                     <input type="hidden" id="data_img1" name="data_img1" value="<?php echo $_POST['data_img1'] ?? '' ?>">
                     <input type="file" id="header2" name='image2' class="hidden form-control" accept="image/jpeg, image/png">
-                    <label for="header2" id="preview2" class="position-relative">
+                    <label for="header2" id="preview2" class="position-relative mt-2">
                         <img src="<?php echo (!empty($_POST['data_img2'])) ? $_POST['data_img2'] : ((!empty($photo['photo2'])) ? URL . 'images/' . $photo['photo2'] : 'https://via.placeholder.com/100?text=Photo2') ?>" alt="preview" class="rounded " width="148">
-                        <span <?php if(!$modif) echo 'hidden'?> class="pe-1 text-secondary position-absolute top-0 end-0"><i class="far fa-window-close"></i></span>
+                        <a href="" <?php if(!$modif || empty($photo['photo2'])) echo 'hidden'?> id="suppr_2" class="pe-1 couleur-perso position-absolute top-0 end-0 suppr"><i class="far fa-window-close"></i></a>
                     </label>
+                    <input type="hidden" id="toDel2" name="toDel2" value="">
                     <input type="hidden" id="nom_original2" name="nom_original2" value="<?php echo $_POST['nom_original2'] ?? '' ?>">
                     <input type="hidden" id="data_img2" name="data_img2" value="<?php echo $_POST['data_img2'] ?? '' ?>">
 
                     <input type="file" id="header3" name='image3' class="hidden form-control" accept="image/jpeg, image/png">
-                    <label for="header3" id="preview3" class="position-relative">
+                    <label for="header3" id="preview3" class="position-relative mt-2">
                         <img src="<?php echo (!empty($_POST['data_img3'])) ? $_POST['data_img3'] : ((!empty($photo['photo3'])) ? URL . 'images/' . $photo['photo3'] : 'https://via.placeholder.com/100?text=Photo3') ?>" alt="preview" class="rounded " width="148">
-                        <span <?php if(!$modif) echo 'hidden'?> class="pe-1 text-secondary position-absolute top-0 end-0"><i class="far fa-window-close"></i></span>
+                        <a href="" <?php if(!$modif || empty($photo['photo3'])) echo 'hidden'?> id="suppr_3" class="pe-1 couleur-perso position-absolute top-0 end-0 suppr"><i class="far fa-window-close"></i></a>
                     </label>
+                    <input type="hidden" id="toDel3" name="toDel3" value="">
                     <input type="hidden" id="nom_original3" name="nom_original3" value="<?php echo $_POST['nom_original3'] ?? '' ?>">
                     <input type="hidden" id="data_img3" name="data_img3" value="<?php echo $_POST['data_img3'] ?? '' ?>">
 
                     <input type="file" id="header4" name='image4' class="hidden form-control" accept="image/jpeg, image/png">
-                    <label for="header4" id="preview4" class="position-relative">
+                    <label for="header4" id="preview4" class="position-relative mt-2">
                         <img src="<?php echo (!empty($_POST['data_img4'])) ? $_POST['data_img4'] : ((!empty($photo['photo4'])) ? URL . 'images/' . $photo['photo4'] : 'https://via.placeholder.com/100?text=Photo4') ?>" alt="preview" class="rounded " width="148">
-                    <span <?php if(!$modif) echo 'hidden'?> class="pe-1 text-secondary position-absolute top-0 end-0"><i class="far fa-window-close"></i></span>
+                    <a href="" <?php if(!$modif || empty($photo['photo4'])) echo 'hidden'?> id="suppr_4" class="pe-1 couleur-perso position-absolute top-0 end-0 suppr"><i class="far fa-window-close"></i></a>
                     </label>
+                    <input type="hidden" id="toDel4" name="toDel4" value="">
                     <input type="hidden" id="nom_original4" name="nom_original4" value="<?php echo $_POST['nom_original4'] ?? '' ?>">
                     <input type="hidden" id="data_img4" name="data_img4" value="<?php echo $_POST['data_img4'] ?? '' ?>">
 
                     <input type="file" id="header5" name='image5' class="hidden form-control" accept="image/jpeg, image/png">
-                        <label for="header5" id="preview5" class="position-relative">
+                        <label for="header5" id="preview5" class="position-relative mt-2">
                         <img src="<?php echo (!empty($_POST['data_img5'])) ? $_POST['data_img5'] : ((!empty($photo['photo5'])) ? URL . 'images/' . $photo['photo5'] : 'https://via.placeholder.com/100?text=Photo5') ?>" alt="preview" class="rounded" width="148">
-                        <span <?php if(!$modif) echo 'hidden'?> class="pe-1 text-secondary position-absolute top-0 end-0"><i class="far fa-window-close"></i></a>
+                        <a href="" <?php if(!$modif || empty($photo['photo5'])) echo 'hidden'?> id="suppr_5" class="pe-1 couleur-perso position-absolute top-0 end-0 suppr"><i class="far fa-window-close"></i></a>
                     </label>
+                    <input type="hidden" id="toDel5" name="toDel5" value="">
                     <input type="hidden" id="nom_original5" name="nom_original5" value="<?php echo $_POST['nom_original5'] ?? '' ?>">
                     <input type="hidden" id="data_img5" name="data_img5" value="<?php echo $_POST['data_img5'] ?? '' ?>">
                 </div>
                 <div class="mb-3">
                     <label for="adresse" class="form-label">Adresse</label>
-                    <textarea id="adresse" name="adresse" class="form-control" rows="2" placeholder="Adresse figurant dans l'annonce"><?php echo (isset($current['adresse'])) ? $current['adresse'] : '' ?></textarea>
+                    <textarea id="adresse" name="adresse" class="form-control" rows="2" placeholder="Adresse figurant dans l'annonce"><?php echo (isset($current['adresse'])) ? $current['adresse'] : (isset($_POST['adresse']) ? $_POST['adresse'] : '' )?></textarea>
                 </div>
                 <div class="row">
                     <div class="col-xl-2 col-lg-3 col-4">
                         <label for="cp" class="form-label">Code Postal </label>
-                        <input type="text" maxlength="5" id="cp" name="cp" class="form-control" value="<?php echo (isset($current['cp'])) ? $current['cp'] : '' ?>" placeholder="Code postal">
+                        <input type="text" maxlength="5" id="cp" name="cp" class="form-control" value="<?php echo (isset($current['cp'])) ? $current['cp']  :  (isset($_POST['cp']) ? $_POST['cp'] : '' )?>" placeholder="Code postal">
                     </div>
                     <div class="col">
                         <label for="ville" class="form-label">Ville</label>
                         <select id="ville" name="ville" class="form-select">
-                            <option selected><?php echo (isset($current['ville'])) ? $current['ville'] : '' ?></option>
+                            <option selected><?php echo (isset($current['ville'])) ? $current['ville'] : (isset($_POST['ville']) ? $_POST['ville'] : '') ?></option>
                         </select>
                     </div>
                     <div class="col">

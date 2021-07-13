@@ -2,7 +2,7 @@
     <footer class="container-fluid bg-perso text-light text-center">
         <div class="row">
             <div class="col py-3">
-                SWAP - &copy; <?php echo date('Y') ?> - Tous droits réservés - <a href="mentions.php" class="text-decoration-none text-white">Mentions légales</a> - <a href="conditions.php" class="text-decoration-none text-white">CGV</a> 
+                SWAP - &copy; <?php echo date('Y') ?> - Tous droits réservés - <a href="cgv.php" class="text-decoration-none text-white">Mentions légales - CGV</a> 
             </div>
         </div>
     </footer>
@@ -16,5 +16,6 @@
 
     <!-- script principal -->
     <script src="<?php echo URL ?>js/swap.js"></script>
+    <script src="<?php echo URL ?>js/accordion.js"></script>
  </body>
 </html>

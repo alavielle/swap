@@ -44,6 +44,7 @@ if (!empty($_POST)) {
 }
 
 $title = "Connexion";
+$subtitle = "Connect";
 require_once('includes/header.php');
 ?>
 <div class="row justify-content-center">

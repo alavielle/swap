@@ -15,7 +15,15 @@ if (!empty($_POST)) { // formulaire soumis
     if (empty(trim($_POST['pseudo']))) {
         $errors++;
         add_flash('Merci de choisir un pseudo', 'danger');
+    } else if(iconv_strlen($_POST['pseudo']) < 3 || iconv_strlen($_POST['pseudo']) > 30){
+        $errors++;
+        add_flash('Le pseudo doit contenir au moins 3 caractères et moins de 30', 'danger');      
     } else {
+        $pattern = '#^[a-z0-9\]\[_-]+$#i';
+        if (!preg_match($pattern, $_POST['pseudo'])) {
+            $errors++;
+            add_flash('Le pseudo ne peut contenir que des lettres ou chiffres', 'danger');
+        }
         $user = getUserByPseudo(trim($_POST['pseudo']));
         if ($user) {  // la valeur booléenne de qqchose de rempli est vrai
             $errors++;
@@ -59,7 +67,7 @@ if (!empty($_POST)) { // formulaire soumis
                 $errors++;
                 add_flash("L'adresse email choisie est indisponible, merci d'en choisir une autre", 'warning');
             } else {
-                $_POST['pseudo'] = trim($_POST['pseudo']);
+                $_POST['email'] = trim($_POST['email']);
             }
         }
     }
@@ -115,6 +123,7 @@ if (!empty($_POST)) { // formulaire soumis
 
 
 $title = "Inscription";
+$subtitle = "Connect";
 require_once('includes/header.php');
 
 ?>
@@ -126,37 +135,37 @@ require_once('includes/header.php');
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="pseudo" class="form-label">Pseudo</label>
+                        <label for="pseudo" class="form-label">Pseudo*</label>
                         <input type="text" id="pseudo" name="pseudo" class="form-control" value="<?php echo $_POST['pseudo'] ?? '' ?>">
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Mot de passe</label>
+                        <label for="password" class="form-label">Mot de passe*</label>
                         <input type="password" id="password" name="password" class="form-control">
                     </div>
                     <div class="mb-3">
-                        <label for="confirmation" class="form-label">confirmation du mot de passe</label>
+                        <label for="confirmation" class="form-label">confirmation du mot de passe*</label>
                         <input type="password" id="confirmation" name="confirmation" class="form-control">
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label">Email*</label>
                         <input type="text" id="email" name="email" class="form-control" value="<?php echo $_POST['email'] ?? '' ?>">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="nom" class="form-label">Nom</label>
+                        <label for="nom" class="form-label">Nom*</label>
                         <input type="text" id="nom" name="nom" class="form-control" value="<?php echo $_POST['nom'] ?? '' ?>">
                     </div>
                     <div class="mb-3">
-                        <label for="prenom" class="form-label">Prénom</label>
+                        <label for="prenom" class="form-label">Prénom*</label>
                         <input type="text" id="prenom" name="prenom" class="form-control" value="<?php echo $_POST['prenom'] ?? '' ?>">
                     </div>
                     <div class="mb-3">
-                        <label for="telephone" class="form-label">Téléphone</label>
+                        <label for="telephone" class="form-label">Téléphone*</label>
                         <input type="text" id="telephone" name="telephone" class="form-control" value="<?php echo  $_POST['telephone'] ?? '' ?>">
                     </div>
                     <div class="mb-3">
-                        <label for="civilite" class="form-label">Civilité</label>
+                        <label for="civilite" class="form-label">Civilité*</label>
                         <select id="civilite" name="civilite" class="form-select">
                             <option disabled <?php if (empty($_POST['civilite'])) echo 'selected' ?>>Choisir une civilité</option>
                             <option value="m" <?php if (!empty($_POST['civilite']) && $_POST['civilite'] == "m") echo 'selected' ?>>Homme</option>
@@ -168,7 +177,9 @@ require_once('includes/header.php');
                     <button type="submit" class="btn btn-perso mt-4">S'inscrire</button>
                 </div>
             </div>
+            <p class="fst-italic fs-6">* champs obligatoires</p>
         </form>
+        
     </div>
 </div>
 <div class="row">

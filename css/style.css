@@ -8,12 +8,14 @@ pre {
     white-space: pre-wrap;
   }
 
-nav.bg-perso, footer.bg-perso, #profil.active, #infos.active, #pwd.active{
+nav.bg-perso, footer.bg-perso, .list-group-item.active{
+    border:#10304d;
     background-color: #ffaf00;
 }
 .nav-link{
-    color: rgba(0,0,0,.55);
+    color: rgba(0,0,0,.75);
 }
+
 .couleur-perso{
     color:#ffaf00;
     font-weight: bold;
@@ -23,8 +25,9 @@ nav.bg-perso, footer.bg-perso, #profil.active, #infos.active, #pwd.active{
     color:white;
 }
 
-.nav-link.active, .nav-link:hover{
+.nav-link.active, .nav-link.activePerso, .nav-link:hover{
     color: rgba(0,0,0,.9);
+    font-weight: bold;
 }
 
 .btn-perso{
@@ -71,10 +74,6 @@ h2{
 .show{
     display: block;
 }
-.list-group-item.active{
-    background: #6c757d;
-    border:#6c757d;
-}
 
 #preview a{
     /* position: absolute; */
@@ -83,7 +82,7 @@ h2{
     border: 1px solid grey;
 }
 
-#preview1:hover, #preview2:hover, #preview3:hover, #preview4:hover, #preview5:hover{
+#preview1:hover, #preview2:hover, #preview3:hover, #preview4:hover, #preview5:hover, .avis, .listeAvis{
     cursor: pointer;
 }
 
@@ -92,19 +91,23 @@ h2{
 }
 
 
-#hauteur{
+.hauteur{
     height: 180px;
+    width: 180px;
     overflow: hidden;
+    background-color: grey;
+    position: relative;
 }
+
 
 #blocGalerie {
     overflow: hidden;
-    max-height: 600px;
+    max-height: 800px;
 }
 #blocGalerie img{
     padding: 5px;
     border: 5px solid white;
-    width: 100%;
+    /* width: 100%; */
     max-width: 600px;
 
 }
@@ -154,6 +157,51 @@ h2{
     border: none;
 }
 
+.mapNormal {
+    width: 100%;
+    height: 300px;
+  }
+
+
+  a.question {
+    background: #fafafe;
+    padding: 11px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    display: block;
+    border-bottom: 1px solid #e7e7e7;
+    position:relative;
+    text-decoration: none;
+    color: #2a2a2e;
+   }
+   a.question i {
+    position:absolute;
+    right:3%;
+    transition: 0.3s;
+   }
+   p.answer {
+    padding: 15px;
+    display: none;
+    background: #fff;
+    margin-top:0;
+    margin-bottom: 0;
+    color: #455;
+   }
+
+   a.active{
+       color: grey;
+       font-weight: bold;
+   }
+
+   /*Le i qui est ds la classe active*/
+   a.active i{
+       transform: rotate(90deg);
+   }
+
+   .accordion-item{
+       display: none;
+   }
+
 @media (max-width: 600px) {
     /* .contenu{
         text-align: left;
@@ -162,6 +210,6 @@ h2{
         min-width: 50px;
         text-align: center;
     }
-    
 
+    
   }
